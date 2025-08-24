@@ -1,0 +1,85 @@
+🚀 NGINX Ingress on EKS with LoadBalancer: Full Setup
+
+🔧 Prerequisites:
+- EKS cluster is running
+- kubectl is configured
+- helm is installed
+- At least one workload is deployed (e.g., frontend, backend)
+
+✅ Step 1: Add the Ingress NGINX Helm Repo
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+✅ Step 2: Install NGINX Ingress Controller as a LoadBalancer
+helm install nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx --create-namespace \
+  --set controller.service.type=LoadBalancer
+
+✅ Step 3: Get the AWS LoadBalancer Hostname
+kubectl get svc -n ingress-nginx
+# Look for the LoadBalancer EXTERNAL-IP or hostname
+
+✅ Step 4: Deploy a Sample Application (if not already)
+Example frontend-service.yaml:
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: staging
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 3000
+
+✅ Step 5: Create an Ingress Resource
+Create frontend-ingress.yaml:
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: staging
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: frontend.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+
+kubectl apply -f frontend-ingress.yaml
+
+✅ Step 6: Point DNS to the Load Balancer (e.g., using Route 53)
+- Create a CNAME record:
+  Name: frontend.example.com
+  Type: CNAME
+  Value: <AWS ELB DNS>
+
+✅ Step 7: Verify
+Open: http://frontend.example.com
+
+✅ Optional Step 8: Add HTTPS (Let’s Encrypt)
+Use cert-manager and create a ClusterIssuer and TLS Ingress rule.
+
+🧭 Traffic Flow Summary:
+User
+  ↓
+DNS (frontend.example.com → ELB)
+  ↓
+AWS ELB (LoadBalancer Service created by Helm)
+  ↓
+Node (EKS EC2 instance)
+  ↓
+NGINX Ingress Controller Pod
+  ↓
+Ingress Rule → frontend-service
+  ↓
+kube-proxy → one of the frontend pods (port 3000)

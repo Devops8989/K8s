@@ -1,0 +1,236 @@
+Real-World DevOps Tools & Setup (Minikube Project Reference)
+
+Project Setup Summary
+
+Minikube with 2 namespaces:
+
+jenkins: Jenkins installed to build/push Docker images from GitHub
+
+staging: Frontend, backend, and MongoDB deployed via Helm
+
+Goal
+
+Integrate and simulate real-world DevOps tools, services, and scenarios used in industry.
+
+1. NGINX Ingress Controller (Reverse Proxy & Load Balancer)
+
+Use Case:
+
+Route traffic (e.g., frontend.local, api.local)
+
+SSL termination, rewrites, rate limiting
+
+Install:
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+
+Steps:
+
+Create Ingress resources in Helm charts (frontend/backend)
+
+Add domains to /etc/hosts for local routing
+
+2. RabbitMQ (Message Broker)
+
+Use Case:
+
+Queue-based communication between microservices
+
+Install:
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install rabbitmq bitnami/rabbitmq --namespace staging
+
+Steps:
+
+Use env vars in backend to connect
+
+Enable management UI on port 15672
+
+3. SonarQube (Static Code Analysis)
+
+Use Case:
+
+Analyze code for bugs, security issues, test coverage
+
+Install:
+
+helm repo add oteemocharts https://oteemo.github.io/charts
+helm install sonarqube oteemocharts/sonarqube --namespace sonarqube --create-namespace
+
+Steps:
+
+Add SonarQube stage to Jenkins pipeline
+
+Use sonar-scanner with auth token stored in Jenkins credentials
+
+4. Prometheus + Grafana (Monitoring)
+
+Use Case:
+
+Monitor CPU, memory, pod status
+
+Install:
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+
+Steps:
+
+Access Grafana dashboard
+
+Add Kubernetes monitoring dashboards
+
+5. External Secrets (with AWS or simulated)
+
+Use Case:
+
+Secure secret management from external sources
+
+Tools:
+
+Use AWS Secrets Manager + External Secrets Operator (ESO)
+
+6. EFK Stack (Elasticsearch, Fluentd, Kibana)
+
+Use Case:
+
+Centralized log collection and visualization
+
+Steps:
+
+Use Helm to deploy Fluentd + Elasticsearch + Kibana stack
+
+7. RBAC & Security Best Practices
+
+Steps:
+
+Use ServiceAccount per app
+
+Bind least privilege roles
+
+Example Role:
+
+kind: Role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+
+8. Probes & Autoscaling
+
+Use readiness and liveness probes in all deployments
+
+Enable HorizontalPodAutoscaler for backend
+
+9. Jenkins CI/CD Best Practices
+
+Stages to add:
+
+lint: ESLint, Prettier
+
+test: Unit/Integration
+
+sonarqube: Static analysis
+
+build + push: Docker
+
+deploy: Helm upgrade
+
+Store Helm values per env and use GitOps-style updates
+
+10. Helm Best Practices
+
+Structure:
+
+Use values-staging.yaml, values-prod.yaml
+
+Use dependencies: in Chart.yaml
+
+11. Optional: Nexus/Artifactory
+
+Use Case:
+
+Store Docker images or build artifacts
+
+Alternative:
+
+Use private Docker Hub repos if Nexus is too heavy
+
+12. Optional Advanced Tools
+
+Tool
+
+Use
+
+Keycloak
+
+Auth/SSO
+
+Vault
+
+Advanced secrets management
+
+ArgoCD
+
+GitOps-based deployment
+
+KEDA
+
+Event-driven autoscaling
+
+PostgreSQL
+
+Relational database
+
+Redis
+
+Caching layer
+
+Suggested Namespace Layout
+
+Namespace
+
+Purpose
+
+jenkins
+
+CI/CD pipelines
+
+staging
+
+App deployments
+
+monitoring
+
+Prometheus, Grafana
+
+ingress-nginx
+
+NGINX ingress controller
+
+rabbitmq
+
+RabbitMQ message broker
+
+sonarqube
+
+SonarQube for code quality
+
+Suggested Helm Project Folder Structure
+
+k8s/
+├── chart/
+│   ├── frontend/
+│   ├── backend/
+│   ├── mongodb/
+│   ├── rabbitmq/
+│   └── common-lib/
+├── envs/
+│   ├── staging/
+│   │   ├── frontend-values.yaml
+│   │   ├── backend-values.yaml
+│   │   └── mongodb-values.yaml
+
+Use this as a reference for implementing and simulating real-world DevOps practices in your Minikube-based environment.

@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: jenkins/jenkins
+  tag: lts
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: standard

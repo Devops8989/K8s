@@ -1,34 +1,72 @@
-# Helm chart build artifacts
-*.tgz
-charts/*.tgz
-
-# Helm/Kubectl cache or metadata
-.helm/
-.kube/
-
-# Secrets and sensitive values
-secrets.yaml
-**/*secrets*.yaml
-values-prod.yaml
-values-dev.yaml
-*.enc
-*.key
-*.pem
-
-# Local override values
-*.local.yaml
-*.override.yaml
-
-# Editor/IDE configs
-.vscode/
-.idea/
-
-# Logs and backups
-*.log
-*.bak
-*.tmp
-*.swp
-
-# OS generated files
+# -----------------------------
+# OS / Editor junk
+# -----------------------------
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.log
+
+# -----------------------------
+# Kubernetes / Helm
+# -----------------------------
+# Helm packaged charts / deps
+**/charts/*.tgz
+**/charts/*.tar.gz
+
+# Keep Chart.lock committed (reproducible deps), so DO NOT ignore it.
+# !**/Chart.lock
+
+# Local kube configs / cache
+.kube/
+**/kubeconfig
+
+# Rendered manifests (if you ever export them locally)
+k8s/**/rendered-*.yaml
+manifests/**
+
+# -----------------------------
+# Secret files & local overrides
+# -----------------------------
+# Never commit plaintext secrets
+# (matches: secret.yaml, my-secret.yaml, app-secrets.yaml, secrets.local.yaml, etc.)
+**/*secret*.yaml
+**/*Secret*.yaml
+**/*-secrets.yaml
+**/*.secrets.yaml
+**/*.secret.yaml
+**/*.local.yaml
+**/*.local.yml
+**/.env
+**/.env.*
+**/*.env
+**/*.env.*
+
+# Allow encrypted or controller-based secret specs
+!**/sealed-secrets/**
+!**/external-secrets/**
+!**/*.sops.yaml
+!**/*.sops.yml
+!**/*.enc.yaml
+!**/*.enc.yml
+
+# Keys / certs
+**/*.pem
+**/*.key
+**/*.pfx
+**/*.p12
+**/*.crt
+**/*.cer
+
+# -----------------------------
+# Tooling caches / artifacts
+# -----------------------------
+# If you add Terraform/Ansible later, uncomment below:
+# .terraform/
+# terraform.tfstate*
+# ansible/.cache/

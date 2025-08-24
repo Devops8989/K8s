@@ -1,0 +1,174 @@
+🔺 Kubernetes + Linux DevOps Cheat Sheet
+
+🔸 1. Volumes (PVCs, Mounts, Permissions)
+
+📆 Check if PVC is bound:
+
+kubectl get pvc -n <namespace>
+kubectl describe pvc <pvc-name> -n <namespace>
+
+📅 Inside pod: Check if volume is mounted
+
+kubectl exec -it <pod-name> -n <namespace> -- df -h
+
+📂 List mount path & permissions
+
+ls -ld /app/data
+id
+whoami
+touch /app/data/test.txt
+
+🔒 Fix permission issues (if allowed)
+
+chown -R 1000:1000 /app/data
+chmod -R 755 /app/data
+
+🔸 2. Secrets & ConfigMaps
+
+🔑 View all secrets:
+
+kubectl get secrets -n <namespace>
+kubectl describe secret <secret-name> -n <namespace>
+
+🧪 Inside pod: verify env vars & file mounts
+
+env | grep MONGO
+cat /etc/secrets/<filename>
+
+🔸 3. Networking: Service Connectivity
+
+🌐 Check DNS resolution:
+
+kubectl exec -it <pod-name> -n <namespace> -- nslookup <service-name>
+
+📆 Check service port:
+
+kubectl exec -it <pod-name> -n <namespace> -- curl <service-name>:<port>
+
+📱 Ping other pods/services:
+
+kubectl exec -it <pod> -n <ns> -- ping <service-name>
+
+🔸 4. Probes (Liveness/Readiness)
+
+🔍 Check current probe status:
+
+kubectl describe pod <pod-name> -n <namespace>
+
+🥪 Inside pod: test the probe path
+
+curl localhost:<port>/health
+curl localhost:<port>/readiness
+
+🔸 5. Init Containers
+
+👶 View init container status:
+
+kubectl describe pod <pod-name> -n <namespace>
+
+📄 Get logs from init container:
+
+kubectl logs <pod-name> -n <namespace> -c <init-container-name>
+
+🔸 6. RBAC (Roles & Access Issues)
+
+🔐 Who am I? What can I do?
+
+kubectl auth can-i get pods --as=system:serviceaccount:<namespace>:<sa-name>
+
+🔎 Describe service account attached to pod:
+
+kubectl describe pod <pod-name> -n <namespace>
+
+🔸 7. HPA (Horizontal Pod Autoscaling)
+
+📊 Check HPA status:
+
+kubectl get hpa -n <namespace>
+kubectl describe hpa <hpa-name> -n <namespace>
+
+📈 Check pod metrics (requires metrics-server):
+
+kubectl top pods -n <namespace>
+
+🔸 8. Logs + Crashes + Container Failures
+
+📋 View logs of a container:
+
+kubectl logs <pod-name> -n <namespace>
+kubectl logs <pod-name> -n <namespace> -c <container-name>
+
+🔍 Describe pod to check events:
+
+kubectl describe pod <pod-name> -n <namespace>
+
+🔸 9. Ingress / DNS / SSL
+
+🔀 Check ingress rule:
+
+kubectl get ingress -n <namespace>
+kubectl describe ingress <name> -n <namespace>
+
+🌐 Test DNS & routing from browser or inside pod:
+
+curl http://<ingress-host>/
+
+🔸 10. General Pod Debugging
+
+🚪 Check open ports:
+
+kubectl exec -it <pod> -n <ns> -- netstat -tuln
+kubectl exec -it <pod> -n <ns> -- ss -lnt
+
+🔎 Inspect running processes:
+
+kubectl exec -it <pod> -n <ns> -- ps aux
+
+💣 Kill hung process (rare case):
+
+kill -9 <pid>
+
+🔸 11. Node + Pod Resource Usage
+
+💻 Check pod resource usage:
+
+kubectl top pods -n <namespace>
+
+🧱 Check node resource usage:
+
+kubectl top nodes
+
+📜 Bonus: Useful Aliases
+
+alias k='kubectl'
+alias kdp='kubectl describe pod'
+alias kgs='kubectl get svc'
+alias kl='kubectl logs'
+alias ke='kubectl exec -it'
+alias ktp='kubectl top pods'
+
+✅ Final Summary
+
+Use Case
+
+You Use kubectl For...
+
+You Use Linux For...
+
+K8s setup
+
+Managing pods, PVCs, services
+
+N/A
+
+Debugging
+
+Logs, events, configs
+
+ps, df, curl, ls, env, etc.
+
+Validation
+
+Check objects (get, describe)
+
+Check behavior inside containers

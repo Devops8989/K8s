@@ -1,0 +1,204 @@
+The 20% Skills That Power 80% of DevOps Work (For 12 LPA Role in India)
+Here is a detailed list of skills + tools + tasks that are most frequently used in real-world mid-level DevOps roles:
+
+1. Linux Fundamentals (Foundation of DevOps)
+⛳ 80% of servers are Linux-based — knowing how to work with Linux is mandatory.
+
+Tasks:
+
+File permissions (chmod, chown)
+
+Process management (ps, top, kill)
+
+Networking (netstat, ss, curl, ping, telnet)
+
+Log management (tail, journalctl, /var/log/)
+
+Shell scripting (bash automation)
+
+2. Git + GitHub (Version Control + Collaboration)
+Git is the lifeline of CI/CD pipelines.
+
+Tools: Git, GitHub/GitLab/Bitbucket
+
+Tasks:
+
+Create feature branches
+
+Pull Requests, Merging
+
+GitHub Actions basics (if not Jenkins)
+
+Webhooks for triggering CI/CD
+
+3. CI/CD using Jenkins (Build + Test + Deploy Automation)
+Jenkins is the most widely used tool for CI/CD.
+
+Core Jenkins concepts:
+
+Pipelines (Jenkinsfile – scripted or declarative)
+
+GitHub → Jenkins webhook trigger
+
+Plugins: Git, Docker, Kubernetes, Pipeline, etc.
+
+Tasks:
+
+Create pipeline to build Docker image and deploy to Kubernetes
+
+Use agents, stages, steps
+
+Use secrets with Jenkins credentials
+
+4. Docker (Containerization of Apps)
+Every microservice-based DevOps project uses Docker.
+
+Must know:
+
+Dockerfile (FROM, RUN, CMD, COPY, EXPOSE)
+
+Docker CLI (build, run, ps, exec, logs)
+
+Docker Compose for local dev
+
+Tagging and pushing to DockerHub
+
+5. Kubernetes (Container Orchestration)
+At 12 LPA, most companies deploy using K8s.
+
+Must know:
+
+Core K8s Objects: Pod, Deployment, Service, Ingress
+
+ConfigMap, Secret, Volume, PVC
+
+kubectl commands
+
+Namespace separation (prod, staging)
+
+How Helm simplifies K8s deployments
+
+6. Helm (Kubernetes Package Manager)
+Helm is used to deploy microservices and manage values/config.
+
+Must know:
+
+Chart structure: Chart.yaml, values.yaml, templates/
+
+Overriding values using -f values-prod.yaml
+
+Helm installation and upgrades
+
+Using Helm in Jenkins pipelines
+
+7. Infrastructure as Code (Terraform)
+Terraform is industry standard for provisioning AWS infra.
+
+Must know:
+
+Write reusable .tf files
+
+terraform init, plan, apply, destroy
+
+Create EC2, VPC, IAM, S3, EKS with Terraform
+
+Remote state with S3 + DynamoDB
+
+8. Cloud Platform (AWS Preferred)
+Every company at this level uses AWS or Azure or GCP.
+
+AWS Basics:
+
+IAM (roles, policies)
+
+EC2, VPC, S3, EKS, ELB
+
+Secrets Manager or Parameter Store
+
+Route53 (for DNS)
+
+IRSA: IAM Role for Service Accounts (for secure access in K8s)
+
+9. Monitoring & Logging (Observability Stack)
+🔍 Basic knowledge is often enough to get started:
+
+Tools:
+
+Prometheus + Grafana (monitoring)
+
+Loki, ELK Stack (logging)
+
+Tasks:
+
+View logs using kubectl logs
+
+View container metrics and create Grafana dashboards
+
+Alert setup (basic knowledge)
+
+10. Secrets Management
+Real-world apps never hardcode credentials.
+
+Tools:
+
+AWS Secrets Manager
+
+Kubernetes Secrets
+
+External Secrets Operator (for EKS)
+
+Tasks:
+
+Inject secrets into apps using environment variables or volumes
+
+Use IRSA to allow external secrets operator to pull secrets from AWS
+
+11. Basic Networking + DNS
+A DevOps engineer needs to understand:
+
+DNS resolution (A records, CNAME)
+
+Load Balancers (ALB, NLB, Ingress Controller)
+
+Ports, protocols
+
+Firewalls/Security Groups
+
+VPC structure (subnets, route tables)
+
+12. Basic Security & RBAC
+Security is a shared responsibility in DevOps.
+
+Tasks:
+
+IAM permissions in AWS
+
+Kubernetes RBAC (Roles, RoleBindings)
+
+Secrets & private registry access (DockerHub tokens, Helm repo auth)
+
+13. Ansible (for Configuration Management)
+Often used with Terraform to configure EC2s or VMs.
+
+Must know:
+
+Playbooks, roles, tasks
+
+ansible.cfg, inventory
+
+Installing packages, editing files, restarting services
+
+14. Real-world CI/CD Pipelines
+A pipeline example that reflects 80% of work:
+
+mathematica
+Copy
+Edit
+GitHub Push →
+Jenkins Pipeline →
+Build Docker Image →
+Push to DockerHub →
+Deploy via Helm to K8s →
+Ingress URL exposed →
+Validate via browser →
+Monitor with Grafana

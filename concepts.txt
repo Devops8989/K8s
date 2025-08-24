@@ -1,0 +1,313 @@
+ecommerce-frontend/
+├── charts/
+│ └── frontend/
+│ ├── Chart.yaml
+│ ├── values.yaml
+│ ├── templates/
+│ │ ├── deployment.yaml
+│ │ ├── service.yaml
+│ │ ├── ingress.yaml
+│ │ ├── pvc.yaml
+│ │ ├── configmap.yaml
+│ │ ├── secrets.yaml
+│ │ ├── hpa.yaml
+│ │ ├── pdb.yaml
+│ │ ├── cronjob.yaml
+│ │ └── networkpolicy.yaml
+├── jenkins/
+│ └── Jenkinsfile
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      serviceAccountName: frontend-sa
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: frontend
+              topologyKey: "kubernetes.io/hostname"
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          command: ['sh', '-c', 'sleep 10']
+      containers:
+        - name: frontend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: frontend-storage
+              mountPath: /usr/share/nginx/html
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+        - name: fluentd-sidecar
+          image: fluentd
+          volumeMounts:
+            - name: frontend-storage
+              mountPath: /logs
+      volumes:
+        - name: frontend-storage
+          persistentVolumeClaim:
+            claimName: frontend-pvc
+
+
+
+
+# Install chart
+
+helm install frontend charts/frontend -n staging
+
+# Upgrade chart
+
+helm upgrade frontend charts/frontend -n staging
+
+# Check all resources
+
+kubectl get all -n staging
+
+# Verify HPA
+
+kubectl get hpa -n staging
+
+# Logs
+
+kubectl logs pod/frontend-pod-name -c log-collector -n staging
+
+# PVC check
+
+kubectl get pvc -n staging
+
+# Ingress check
+
+kubectl get ingress -n staging
+
+# CronJob status
+
+kubectl get cronjob -n staging
+
+
+
+
+
+
+
+ What You’ve Already Done:
+Deployed frontend using Helm with:
+
+deployment.yaml
+
+service.yaml
+
+ingress.yaml
+
+Frontend is running in the staging namespace.
+
+CI/CD is set up using Jenkins in the jenkins namespace.
+
+🎯 Your Goal:
+A full production-like Kubernetes environment with:
+
+Frontend
+
+Backend
+
+Database
+
+Secrets, ConfigMaps, Probes, HPA, PVC, StatefulSet, Ingress, CronJobs, RBAC, Helm, etc.
+
+🔧 Next Steps — Full Industry Flow Setup
+1. Backend Setup (Node.js / Django / etc.)
+Create a Helm chart for the backend service.
+
+Use:
+
+deployment.yaml
+
+service.yaml
+
+ingress.yaml
+
+ConfigMaps for env vars
+
+Secrets for credentials
+
+Liveness & readiness probes
+
+Resource limits
+
+✅ Goal: Backend runs independently, handles API, and is exposed internally.
+
+2. Database Setup (e.g., PostgreSQL / MySQL)
+Use a StatefulSet (not Deployment) for data consistency.
+
+Mount a PVC for persistent storage.
+
+Create:
+
+statefulset.yaml
+
+service.yaml (headless for DB)
+
+pvc.yaml
+
+configmap.yaml (for DB init script)
+
+secret.yaml (for DB credentials)
+
+✅ Goal: DB is stateful, durable, and isolated.
+
+3. Shared Services (like Redis, RabbitMQ)
+Create separate Helm charts for caching/message queueing.
+
+Use PVC if needed.
+
+Add readiness checks.
+
+4. Connect All Components
+Frontend talks to backend
+
+Backend talks to database
+
+Use internal K8s DNS names like:
+
+http://backend-service:5000
+
+postgres://db-user:password@db-service:5432/mydb
+
+✅ Goal: Services communicate inside cluster via DNS.
+
+5. Add Horizontal Pod Autoscaling (HPA)
+Add to backend and frontend deployments.
+
+Uses CPU/memory metrics.
+
+✅ hpa.yaml per service.
+
+6. Ingress for All Services
+Use a single ingress controller (like nginx).
+
+Setup multiple paths:
+
+/api/ → backend
+
+/ → frontend
+
+✅ Goal: Route traffic using domain/path rules.
+
+7. RBAC + NetworkPolicies
+Add role, rolebinding, and serviceaccount for Jenkins and services.
+
+Use NetworkPolicy to restrict traffic:
+
+Frontend → Backend ✅
+
+Frontend → DB ❌
+
+8. Add CronJob for Daily Task
+E.g., Create a daily DB backup or cleanup job.
+
+✅ cronjob.yaml
+
+9. CI/CD with Jenkins
+Build & push Docker image on GitHub push.
+
+Update Helm chart with new tag.
+
+Use Jenkins to run:
+
+helm upgrade --install
+
+✅ Include Jenkinsfile per repo.
+
+10. Monitoring & Logging (Bonus)
+Install Prometheus, Grafana, and Loki with Helm.
+
+Monitor pods, view logs.
+
+🧠 Helm Project Structure (for each service)
+pgsql
+
+helm-backend/
+├── Chart.yaml
+├── values.yaml
+├── templates/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── ingress.yaml
+│   ├── configmap.yaml
+│   ├── secret.yaml
+│   ├── hpa.yaml
+│   ├── rbac.yaml
+│   └── probes.yaml
+🔍 Verification Commands
+bash
+Copy
+Edit
+# Check deployment
+kubectl get deployments -n staging
+
+# Check pods and logs
+kubectl get pods -n staging
+kubectl logs <pod-name> -n staging
+
+# Check ingress
+kubectl get ingress -n staging
+
+# Check services
+kubectl get svc -n staging
+
+# Check persistent volumes
+kubectl get pvc -n staging
+kubectl get pv
+
+# Test HPA
+kubectl get hpa -n staging
+
+# Exec into pod
+kubectl exec -it <pod> -n staging -- /bin/sh
+
+# Get secret (decoded)
+kubectl get secret my-secret -n staging -o yaml | base64 -d
+🧪 Suggestion: Use Separate Helm Charts or Helmfile
+One Helm chart per microservice: frontend, backend, db
+
+Or use Helmfile to manage all charts
+
+
+
+🟦 Databases (Postgres, MySQL, MongoDB, Cassandra)	Need persistent volume, stable identity, and sometimes leader election
+🟨 Kafka, RabbitMQ, Zookeeper, etc.	These require fixed identity, persistent logs, and cluster coordination
+🟩 Elasticsearch, Redis (cluster mode)	Require persistent storage and internal node awareness
+🟧 MinIO (distributed mode)	Needs specific volumes and identity per pod for quorum

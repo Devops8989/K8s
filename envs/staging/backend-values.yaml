@@ -1,0 +1,16 @@
+image:
+  repository: singhsajal/ecommerce-backend
+  tag: "latest"     # or set to your short SHA tag your Jenkins pushed
+
+db:
+  host: "mongodb"        # confirm matches your MongoDB Service name in staging
+  port: 27017
+  name: "stagingdb"
+  username: "staginguser"
+  password: "stagingpass"
+  authSource: "admin"
+
+ingress:
+  enabled: false
+
+
