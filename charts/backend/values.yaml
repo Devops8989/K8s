@@ -1,34 +1,34 @@
-image:
-  repository: singhsajal/ecommerce-backend   # <-- you can override in envs values
-  tag: "latest"                               # set to your pushed tag (e.g., latest or short SHA)
-  pullPolicy: IfNotPresent
+# image:
+#   repository: singhsajal/ecommerce-backend   # <-- you can override in envs values
+#   tag: "latest"                               # set to your pushed tag (e.g., latest or short SHA)
+#   pullPolicy: IfNotPresent
 
-service:
-  type: ClusterIP
-  port: 3000
+# service:
+#   type: ClusterIP
+#   port: 3000
 
-# Database connection parts (assemble into a single URI via Secret template)
-db:
-  host: "mongodb"          # <-- Kubernetes Service name of MongoDB in 'staging'
-  port: 27017
-  name: "stagingdb"
-  username: "staginguser"
-  password: "stagingpass"
-  authSource: "admin"      # root users created via MONGO_INITDB_* live in admin
+# # Database connection parts (assemble into a single URI via Secret template)
+# db:
+#   host: "mongodb"          # <-- Kubernetes Service name of MongoDB in 'staging'
+#   port: 27017
+#   name: "stagingdb"
+#   username: "staginguser"
+#   password: "stagingpass"
+#   authSource: "admin"      # root users created via MONGO_INITDB_* live in admin
 
-ingress:
-  enabled: false
-  className: nginx
-  hosts:
-    - host: backend.local
-      paths:
-        - path: /
-          pathType: Prefix
+# ingress:
+#   enabled: false
+#   className: nginx
+#   hosts:
+#     - host: backend.local
+#       paths:
+#         - path: /
+#           pathType: Prefix
 
-resources:
-  requests:
-    cpu: "50m"
-    memory: "128Mi"
-  limits:
-    cpu: "250m"
-    memory: "256Mi"
+# resources:
+#   requests:
+#     cpu: "50m"
+#     memory: "128Mi"
+#   limits:
+#     cpu: "250m"
+#     memory: "256Mi"

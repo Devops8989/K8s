@@ -13,15 +13,15 @@
 #   type: NodePort
 
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Chart.Name }}
-  namespace: {{ .Release.Namespace }}
-spec:
-  type: {{ .Values.service.type }}
-  selector:
-    app: {{ .Chart.Name }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: {{ .Chart.Name }}
+#   namespace: {{ .Release.Namespace }}
+# spec:
+#   type: {{ .Values.service.type }}
+#   selector:
+#     app: {{ .Chart.Name }}
+#   ports:
+#     - port: {{ .Values.service.port }}
+#       targetPort: {{ .Values.service.targetPort }}

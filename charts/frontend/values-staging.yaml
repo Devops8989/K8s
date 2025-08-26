@@ -1,8 +1,8 @@
-replicaCount: 1
+# replicaCount: 1
 
-image:
-  repository: singhsajal/ecommerce-frontend
-  tag: staging
+# image:
+#   repository: singhsajal/ecommerce-frontend
+#   tag: staging
 
-ingress:
-  host: staging.frontend.local
+# ingress:
+#   host: staging.frontend.local

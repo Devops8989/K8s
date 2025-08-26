@@ -8,27 +8,27 @@
 #   name: ""   # leave empty to let Helm auto-generate
 #   annotations: {}
 
-namespace: staging
+# namespace: staging
 
-image:
-  repository: singhsajal/ecommerce-frontend
-  tag: latest
-  pullPolicy: IfNotPresent
+# image:
+#   repository: singhsajal/ecommerce-frontend
+#   tag: latest
+#   pullPolicy: IfNotPresent
 
-service:
-  port: 80
-  targetPort: 3000   # change if your container listens elsewhere
+# service:
+#   port: 80
+#   targetPort: 3000   # change if your container listens elsewhere
 
-serviceAccount:
-  create: true
-  name: ""
+# serviceAccount:
+#   create: true
+#   name: ""
 
-resources:
-  limits:
-    cpu: "200m"
-    memory: "256Mi"
-  requests:
-    cpu: "100m"
-    memory: "128Mi"
+# resources:
+#   limits:
+#     cpu: "200m"
+#     memory: "256Mi"
+#   requests:
+#     cpu: "100m"
+#     memory: "128Mi"
 
 
