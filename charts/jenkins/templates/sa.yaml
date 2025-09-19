@@ -1,7 +1,19 @@
+# {{- if .Values.serviceAccount.create }}
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: {{ .Values.serviceAccount.name }}
+#   namespace: jenkins
+#   {{- if .Values.serviceAccount.roleArn }}
+#   annotations:
+#     eks.amazonaws.com/role-arn: {{ .Values.serviceAccount.roleArn }}
+#   {{- end }}
+# {{- end }}
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: jenkins-sa
   namespace: jenkins
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::992382695855:role/jenkins-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::992382695855:role/ExternalSecretsRole

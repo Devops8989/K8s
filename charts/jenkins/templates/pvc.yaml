@@ -1,11 +1,16 @@
+{{- if .Values.pvc.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-jenkins-pvc
+  name: jenkins-pvc
+  namespace: jenkins
 spec:
   accessModes:
-    - ReadWriteOnce
+    {{- range .Values.pvc.accessModes }}
+    - {{ . }}
+    {{- end }}
   resources:
     requests:
-      storage: {{ .Values.persistence.size }}
-  storageClassName: {{ .Values.persistence.storageClass }}
+      storage: {{ .Values.pvc.size }}
+  storageClassName: {{ .Values.pvc.storageClassName }}
+{{- end }}

@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Release.Name }}-jenkins"
+  name: jenkins
+  namespace: jenkins
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -12,35 +13,35 @@ spec:
       labels:
         app: jenkins
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       initContainers:
         - name: fix-permissions
           image: busybox
           command: ["sh", "-c", "chown -R 1000:1000 /var/jenkins_home"]
           volumeMounts:
-          - name: jenkins-home
-            mountPath: /var/jenkins_home
-      serviceAccountName: jenkins-sa 
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
       containers:
-      - name: jenkins
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-        - containerPort: 8080
-        - containerPort: 50000
-        volumeMounts:
-        - name: jenkins-home
-          mountPath: /var/jenkins_home
+        - name: jenkins
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+{{- if .Values.useExternalSecret }}
+            - name: JENKINS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jenkins-admin-secret-k8s
+                  key: jenkins-password
+{{- else }}
+            - name: JENKINS_ADMIN_PASSWORD
+              value: "admin123"   # fallback password
+{{- end }}
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
       volumes:
-      - name: jenkins-home
-        persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-jenkins-pvc
-
-  #         serviceAccountIssuerDiscovery:
-  #   discoveryStore: s3://sajalkops-oidc/oidc
-  #   enableAWSOIDCProvider: true
-  # iam:
-  #   useServiceAccountExternalPermissions: true
-  # podIdentityWebhook:
-  #   enabled: true
-  # awsLoadBalancerController:
-  #   enabled: true
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-pvc

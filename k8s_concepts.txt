@@ -1,0 +1,212 @@
+1. Namespaces & RBAC
+
+Why: Separation of environments (staging, prod) + security.
+
+How:
+
+kubectl create namespace staging
+kubectl create namespace prod
+
+
+Create Role/RoleBinding for restricted access.
+Hands-on: Make Jenkins run in jenkins ns, app in staging.
+
+2. Service Accounts & IAM (IRSA)
+
+Why: Secure pod-level access to AWS/GCP/Azure services.
+
+How: You already did this for ALB Controller. Repeat for app (e.g., backend needing S3).
+Hands-on: Attach IAM role to backend pod using ServiceAccount + IRSA.
+
+3. Deployments & ReplicaSets
+
+Why: Ensure apps are scalable, rolling updates possible.
+
+How: Already using for Jenkins + frontend/backend.
+Hands-on: Try scaling:
+
+kubectl scale deployment backend -n staging --replicas=3
+
+4. Services (ClusterIP, NodePort, LoadBalancer, Headless)
+
+Why: Stable networking between pods + external access.
+
+Hands-on:
+
+Frontend → NodePort → verify access.
+
+Backend → ClusterIP → only frontend can access.
+
+DB (Mongo) → Headless service (no load balancer, for StatefulSets).
+
+5. Ingress (ALB / NGINX)
+
+Why: Route HTTP(S) traffic with domains + TLS.
+
+You’re already doing ALB Controller.
+
+Hands-on: Map multiple host rules (jenkins.example.com, frontend.example.com).
+
+6. ConfigMaps
+
+Why: Inject non-sensitive config (e.g., environment variables).
+
+Example:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  MONGO_DB: "mongodb://mongo.staging:27017"
+
+
+Mount into backend pod.
+
+7. Secrets
+
+Why: Store sensitive data (passwords, tokens).
+
+Example:
+
+kubectl create secret generic mongo-secret \
+  --from-literal=username=admin \
+  --from-literal=password=pass123 -n staging
+
+
+Mount into deployment using envFrom.
+
+👉 Extend this to AWS Secrets Manager with External Secrets Operator (ESO) (you already started).
+
+8. Volumes & Persistent Volumes (PV/PVC)
+
+Why: Store data beyond pod lifecycle (DB, Jenkins).
+
+Hands-on:
+
+Create PVC for Jenkins home.
+
+Create PVC for MongoDB.
+
+9. StatefulSets
+
+Why: For databases (stable identities).
+
+Hands-on: Deploy MongoDB with StatefulSet instead of Deployment.
+
+10. Init Containers
+
+Why: Run pre-steps before main container.
+
+Hands-on: Example: Init container waits for Mongo before backend starts.
+
+11. Probes (Readiness & Liveness)
+
+Why: Self-healing, controlled rollout.
+
+Hands-on:
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+12. HPA (Horizontal Pod Autoscaler)
+
+Why: Auto-scale based on CPU/Memory or custom metrics.
+
+Hands-on:
+
+kubectl autoscale deployment backend -n staging --cpu-percent=50 --min=2 --max=5
+
+13. Node Affinity & Taints/Tolerations
+
+Why: Control which pods run where.
+
+Hands-on: Add nodeSelector or affinity so DB always runs on specific nodes.
+
+14. Network Policies
+
+Why: Control pod-to-pod communication (security).
+
+Hands-on: Deny all traffic, allow only frontend → backend, backend → db.
+
+15. Logging & Monitoring
+
+Why: Observability.
+
+Hands-on: Install Prometheus + Grafana via Helm, configure dashboards.
+
+Install EFK (Elasticsearch + Fluentd + Kibana) or Loki stack.
+
+16. Helm (Packaging & Envs)
+
+Why: Industry standard for managing apps.
+
+Hands-on: Already doing this. Extend with:
+
+values-staging.yaml, values-prod.yaml.
+
+One chart per service.
+
+17. CRDs & Operators
+
+Why: Extending Kubernetes with custom logic.
+
+Hands-on: You did ALB Controller + ESO (both Operators).
+
+18. CI/CD with Jenkins
+
+Why: Automate everything.
+
+Hands-on: You already built pipeline → extend to:
+
+Deploy Helm chart automatically.
+
+Run integration tests after deployment.
+
+19. Security
+
+NetworkPolicies (done).
+
+RBAC (done).
+
+Image scanning (Trivy).
+
+Pod Security Standards (restrict root user).
+
+20. Backup & Disaster Recovery
+
+Hands-on: Use Velero to backup/restore cluster resources & PVCs.
+
+🛠 Suggested Hands-On Flow (for you)
+
+Finish ALB Ingress (Jenkins URL).
+
+Add ConfigMaps + Secrets to backend.
+
+Add PVC for Jenkins + Mongo.
+
+Convert Mongo to StatefulSet.
+
+Add Init container to backend.
+
+Add Liveness/Readiness probe to backend.
+
+Add HPA for frontend/backend.
+
+Apply NetworkPolicies (frontend → backend only).
+
+Add Affinity (DB on specific node).
+
+Add monitoring stack (Prometheus + Grafana).
+
+Add logging (EFK or Loki).
+
+Secure images (Trivy scan in Jenkins).
+
+Add ESO for Secrets Manager (prod).
+
+Backup cluster with Velero.

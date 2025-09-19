@@ -8,8 +8,22 @@ image:
 service:
   type: NodePort
   port: 8080
+  nodePort: 30080
 
-persistence:
+pvc:
   enabled: true
-  size: 5Gi
-  storageClass: gp2
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+serviceAccount:
+  create: true
+  name: jenkins-sa
+  roleArn: arn:aws:iam::992382695855:role/ExternalSecretsRole
+
+
+externalSecrets:
+  enabled: true
+  secretName: jenkins-admin-password
+  secretManagerName: my-jenkins-secret
