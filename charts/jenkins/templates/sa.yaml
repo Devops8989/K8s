@@ -1,15 +1,3 @@
-# {{- if .Values.serviceAccount.create }}
-# apiVersion: v1
-# kind: ServiceAccount
-# metadata:
-#   name: {{ .Values.serviceAccount.name }}
-#   namespace: jenkins
-#   {{- if .Values.serviceAccount.roleArn }}
-#   annotations:
-#     eks.amazonaws.com/role-arn: {{ .Values.serviceAccount.roleArn }}
-#   {{- end }}
-# {{- end }}
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
