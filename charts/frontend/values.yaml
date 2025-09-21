@@ -32,7 +32,7 @@
 #     memory: "128Mi"
 
 
-replicaCount: 2
+replicaCount: 3
 
 image:
   repository: singhsajal/ecommerce-frontend
