@@ -32,3 +32,24 @@
 #     memory: "128Mi"
 
 
+replicaCount: 2
+
+image:
+  repository: singhsajal/ecommerce-frontend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30080   # NodePort (optional; if not provided, Kubernetes assigns one automatically)
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+env: {}
