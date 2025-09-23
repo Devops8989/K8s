@@ -1,4 +1,5 @@
 replicaCount: 2
+namespace: staging
 
 image:
   repository: singhsajal/ecommerce-backend
