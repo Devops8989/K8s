@@ -26,3 +26,10 @@ serviceAccount:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+db:
+  host: "myapp-db.xxxxxx.us-east-1.rds.amazonaws.com"
+  port: "3306"
+  name: "myappdb"
+  user: "myappuser"
+  password: "mypassword"   # ⚠️ avoid committing real passwords in GitHub
