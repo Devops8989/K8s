@@ -28,8 +28,8 @@ tolerations: []
 affinity: {}
 
 db:
-  host: "myapp-db.xxxxxx.us-east-1.rds.amazonaws.com"
-  port: "3306"
-  name: "myappdb"
-  user: "myappuser"
-  password: "mypassword"   # ⚠️ avoid committing real passwords in GitHub
+  host: "ecomdb.ci7yguk4y2v3.us-east-1.rds.amazonaws.com"
+  port: "5432"
+  name: "ecomdb"
+  user: "dbadmin"
+  password: "Focus#9418"   # ⚠️ avoid committing real passwords in GitHub
