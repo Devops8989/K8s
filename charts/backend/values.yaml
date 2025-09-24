@@ -1,34 +1,36 @@
-# image:
-#   repository: singhsajal/ecommerce-backend   # <-- you can override in envs values
-#   tag: "latest"                               # set to your pushed tag (e.g., latest or short SHA)
-#   pullPolicy: IfNotPresent
+replicaCount: 2
+namespace: staging
 
-# service:
-#   type: ClusterIP
-#   port: 3000
+image:
+  repository: singhsajal/ecommerce-backend
+  tag: "latest"
+  pullPolicy: IfNotPresent
 
-# # Database connection parts (assemble into a single URI via Secret template)
-# db:
-#   host: "mongodb"          # <-- Kubernetes Service name of MongoDB in 'staging'
-#   port: 27017
-#   name: "stagingdb"
-#   username: "staginguser"
-#   password: "stagingpass"
-#   authSource: "admin"      # root users created via MONGO_INITDB_* live in admin
+service:
+  type: NodePort
+  port: 3000
+  nodePort: 32001
 
-# ingress:
-#   enabled: false
-#   className: nginx
-#   hosts:
-#     - host: backend.local
-#       paths:
-#         - path: /
-#           pathType: Prefix
+resources: {}
+  # Example:
+  # limits:
+  #   cpu: 500m
+  #   memory: 512Mi
+  # requests:
+  #   cpu: 200m
+  #   memory: 256Mi
 
-# resources:
-#   requests:
-#     cpu: "50m"
-#     memory: "128Mi"
-#   limits:
-#     cpu: "250m"
-#     memory: "256Mi"
+serviceAccount:
+  create: true
+  name: ""
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+db:
+  host: "ecomdb.ci7yguk4y2v3.us-east-1.rds.amazonaws.com"
+  port: "5432"
+  name: "ecomdb"
+  user: "dbadmin"
+  password: "Focus#9418"   # ⚠️ avoid committing real passwords in GitHub
